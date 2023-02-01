@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:module-logging="http://www.mulesoft.org/schema/mule/module-logging" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/module-logging http://www.mulesoft.org/schema/mule/module-logging/current/mule-module-logging.xsd">
+    <flow name="e-and-t-orders-salesforce-sapi-main">
+        <http:listener path="/*" config-ref="http_listner_config">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <ee:transform doc:name="Set Flow Variables" doc:id="3ad3ba27-10df-4657-acb4-ebbbf3178e7a">
+            <ee:variables>
+                <ee:set-variable resource="dataweave/vCorrelationId.dwl" variableName="vCorrelationId" />
+                <ee:set-variable resource="dataweave/vOriginationCode.dwl" variableName="vOriginationCode" />
+                <ee:set-variable resource="dataweave/vRequestMethod.dwl" variableName="vRequestMethod" />
+                <ee:set-variable resource="dataweave/vRequestUri.dwl" variableName="vRequestUri" />
+                <ee:set-variable resource="dataweave/vFlowName.dwl" variableName="vFlowName" />
+                <ee:set-variable resource="dataweave/vCurrentTime.dwl" variableName="vStartTime" />
+            </ee:variables>
+        </ee:transform>
+        <module-logging:start-logger doc:name="Start logger" doc:id="2ec98192-9251-4375-9bf5-33be2fab6970" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vTransactionId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T salesforce SAPI Instance Started ']" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+        <apikit:router config-ref="e-and-t-orders-salesforce-sapi-config" />
+        <module-logging:end-logger doc:name="End logger" doc:id="186ab0c3-a164-4302-a4fc-42125607fb7b" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vTransactionId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T Salesforce SAPI Completed']" Time_Taken="#[output application/json --- now() - vars.vStartTime]" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+        <error-handler>
+            <on-error-propagate type="ANY" enableNotifications="true" logException="true">
+                <module-logging:error-logger doc:name="Error logger" doc:id="ce915787-f2b1-4ccd-bdbc-29bf9cbd509f" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vCorrelationId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginatorName]" Target="${operations.constants.target}" Error_Type="#[error.errorType.asString]" Error_Description="#[error.description]" Error_Message="#[error.errorMessage]" Message="#[&quot;E and T salesforce SAPI Call error occurred&quot;]" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload resource="dataweave/salesforce-apikit-error.dwl" />
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="e-and-t-orders-salesforce-sapi-console" initialState="${api.console.state}">
+        <http:listener path="/console/*" config-ref="http_listner_config">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="e-and-t-orders-salesforce-sapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="post:\orders:application\json:e-and-t-orders-salesforce-sapi-config">
+        <flow-ref doc:name="Refer to salesforce subflow" doc:id="87ae7fbf-52d9-45d6-9b1a-bccd586a9cda" name="access_Salesforce_Sub_Flow" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"response" : {
+		"httpStatus": Mule::p('http.response.code.success'),
+        
+        "status": if(isEmpty(payload)) Mule::p('http.constants.response.success') else Mule::p('http.constants.response.failure'),
+        "message" : "Payload was sucessfully inserted into salesforce",
+        "correlationId": vars.vCorrelationId,
+        "timestamp": now()
+	}}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

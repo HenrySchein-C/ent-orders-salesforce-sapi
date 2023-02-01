@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:module-logging="http://www.mulesoft.org/schema/mule/module-logging"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/module-logging http://www.mulesoft.org/schema/mule/module-logging/current/mule-module-logging.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<sub-flow name="access_Salesforce_Sub_Flow" doc:id="e089fee6-1e56-436d-8466-3bd3403ee96f" >
+		<module-logging:start-logger doc:name="Start logger" doc:id="921a19f9-fd3b-4da4-8a1b-a3ab95789d96" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vTransactionId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T salesforce calling henryschein sandbox Started ']" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+		<http:request method="POST" doc:name="Request" doc:id="8ad24511-ac0c-4b3b-9285-32d6081cd7c7" target="targetToken" config-ref="HTTP_Request_configuration_token" path="/oauth2/token">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+"grant_type" : "password",
+"client_id" : "3MVG973QtA4.tpvmU7itl2xfAfZrm1kGUj2HMwuRVusoPKm4UoWrR2hqrtlUsicLlv.UHKpjPxsb8gw3IU_qu",
+"client_secret" : "F697E1F5B2F0CA2A2375A3BBDE18C94F7C208732A35AEABCFB8D8CCE6108CF60",
+"username": "equipmentorders.integrationuser@ibm.com.pldevteam3",
+"password": "Amlzsk@123zyShVIvE316wiu1EAlpG8Ac0f"
+}]]]></http:query-params>
+		</http:request>
+		<http:request method="POST" doc:name="Request" doc:id="f70efe3e-539d-46d5-9dc4-d3781f126d1a" path="/apexrest/SFOrderCreation" config-ref="HTTP_Request_configuration_token">
+			<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer " ++ vars.targetToken.access_token
+}]]]></http:headers>
+		</http:request>
+		<module-logging:end-logger doc:name="End logger" doc:id="5afff209-1908-4d8e-b8fa-272a737e444e" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vTransactionId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T Salesforce data insertion Completed']" Time_Taken="#[output application/json --- now()]" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+	</sub-flow>
+</mule>

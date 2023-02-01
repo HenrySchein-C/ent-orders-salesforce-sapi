@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="e-and-t-orders-salesforce-sapi-test-suite.xml" />
+	<munit:test name="e-and-t-orders-salesforce-sapi-test-suite-e-and-t-orders-salesforce-sapi-mainTest" doc:id="44227c10-6ae4-49de-a5aa-27ab722165c6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b0557caf-f1ea-4c80-b3f8-a41c37bcf8e4" processor="http:listener">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="http_listner_config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="268f483f-68c4-42c2-9a3c-0240fb27e258" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-and-t-orders-salesforce-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to e-and-t-orders-salesforce-sapi-main" doc:id="a5a465a5-96b4-4197-9813-e624a9aded42" name="e-and-t-orders-salesforce-sapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b1c3dfda-16d4-4e92-898b-5277d2324d0f" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="e-and-t-orders-salesforce-sapi-test-suite-e-and-t-orders-salesforce-sapi-mainTest_APIkit_error" doc:id="a7f571cb-a06e-480b-b394-470d61a382f2" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Event" doc:id="e8cfdd6d-ee00-487f-a78c-e7ab39adc6c2">
+				<munit:payload value='#[output application/json&#10;---&#10;{&#10;    "rationingRequest": {&#10;        "accountInfo": {&#10;            "billTo": "131061",&#10;            "shipTo": "131064",&#10;            "countryId": "US",&#10;            "companyId": "01000"&#10;        },&#10;        "productEntries": [&#10;            {&#10;                "sku": "1065857",&#10;                "quantity": 10,&#10;                "unitOfMeasure": "EA"&#10;            },&#10;            {&#10;                "sku": "1339662",&#10;                "quantity": 7,&#10;                "unitOfMeasure": "BX"&#10;            }&#10;        ]&#10;    }&#10;}]' />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="98525dbd-504c-44a0-bcc1-1e011900090a" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-and-t-orders-salesforce-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		
+</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to e-and-t-orders-salesforce-sapi-main" doc:id="70831944-eb84-4233-b8a4-07ee3237aced" name="e-and-t-orders-salesforce-sapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8b829a1b-f1ff-4be2-afc0-f4d54253fec0" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="e-and-t-orders-salesforce-sapi-test-suite-post:\orders:application\json:e-and-t-orders-salesforce-sapi-configTest" doc:id="cae1d43b-e559-4899-a7e0-9538bccaf7bc" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Event" doc:id="7b637ef6-689d-4041-808f-a64116b27408">
+				<munit:payload value='#[output application/json&#10;---&#10;{&#10;    "rationingRequest": {&#10;        "accountInfo": {&#10;            "billTo": "131061",&#10;            "shipTo": "131064",&#10;            "countryId": "US",&#10;            "companyId": "01000"&#10;        },&#10;        "productEntries": [&#10;            {&#10;                "sku": "1065857",&#10;                "quantity": 10,&#10;                "unitOfMeasure": "EA"&#10;            },&#10;            {&#10;                "sku": "1339662",&#10;                "quantity": 7,&#10;                "unitOfMeasure": "BX"&#10;            }&#10;        ]&#10;    }&#10;}]' />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0b9e4fa2-0ed1-424a-b94e-b781547b77f2" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Refer to salesforce subflow" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="87ae7fbf-52d9-45d6-9b1a-bccd586a9cda" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\orders:application\json:e-and-t-orders-salesforce-sapi-config" doc:id="3c670e86-14d8-4b8a-a6c1-a8d7bcc5ce2e" name="post:\orders:application\json:e-and-t-orders-salesforce-sapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="a30d863f-4630-416a-b33b-f6a861dceb86" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="e-and-t-orders-salesforce-sapi-test-suite-e-and-t-orders-salesforce-sapi-consoleTest" doc:id="a73a320b-21d8-49ce-b7c6-008f4aea924f" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Event" doc:id="c4665a62-641e-431a-b070-548cf62294f7">
+				<munit:payload value='#[output application/json&#10;---&#10;{&#10;    "rationingRequest": {&#10;        "accountInfo": {&#10;            "billTo": "131061",&#10;            "shipTo": "131064",&#10;            "countryId": "US",&#10;            "companyId": "01000"&#10;        },&#10;        "productEntries": [&#10;            {&#10;                "sku": "1065857",&#10;                "quantity": 10,&#10;                "unitOfMeasure": "EA"&#10;            },&#10;            {&#10;                "sku": "1339662",&#10;                "quantity": 7,&#10;                "unitOfMeasure": "BX"&#10;            }&#10;        ]&#10;    }&#10;}]' />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="8a09a55f-a3a5-4a80-9dc0-cc4521568fe9" processor="http:listener">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="/console/*" attributeName="path" />
+					<munit-tools:with-attribute whereValue="http_listner_config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c3527274-541e-40c1-8a32-d355ea235fa3" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-and-t-orders-salesforce-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to e-and-t-orders-salesforce-sapi-console" doc:id="7ae38456-88df-4db0-b962-ca75ff114f63" name="e-and-t-orders-salesforce-sapi-console"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="e-and-t-orders-salesforce-sapi-test-suite-e-and-t-orders-salesforce-sapi-mainTest1" doc:id="375233d4-d21b-425a-8007-2403c16a0167" description="Test">
+		<munit:behavior >
+			<munit:set-event doc:name="Set Event" doc:id="35a6549b-4608-4082-a390-a973d761543b">
+				<munit:payload value='#[output application/json&#10;---&#10;{&#10;    "rationingRequest": {&#10;        "accountInfo": {&#10;            "billTo": "131061",&#10;            "shipTo": "131064",&#10;            "countryId": "US",&#10;            "companyId": "01000"&#10;        },&#10;        "productEntries": [&#10;            {&#10;                "sku": "1065857",&#10;                "quantity": 10,&#10;                "unitOfMeasure": "EA"&#10;            },&#10;            {&#10;                "sku": "1339662",&#10;                "quantity": 7,&#10;                "unitOfMeasure": "BX"&#10;            }&#10;        ]&#10;    }&#10;}]' />
+			</munit:set-event>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="38f19556-1003-4305-bdc6-4e9d1ec208f6" processor="http:listener" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="http_listner_config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="ANY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<try doc:name="Try" doc:id="d39d1c48-376a-4b60-aefb-0518f8709e02" >
+				<flow-ref doc:name="Flow-ref to e-and-t-orders-salesforce-sapi-main" doc:id="a07bd932-d806-4bbb-afaa-69b2fe4c5fc1" name="e-and-t-orders-salesforce-sapi-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="5c16e497-51cc-4e6e-86ea-ee7a6077b75c" >
+						<logger level="INFO" doc:name="Logger" doc:id="3b52f837-b95f-4125-a582-a64399dfcd6d" message="#[vars.HttpStatus]"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="eaee8c52-9d52-4170-a01e-c146304aed97" is="#[MunitTools::notNullValue()]" expression="#[vars.vHttpStatus]"/>
+			<munit-tools:assert doc:name="Assert expression" doc:id="08642984-4e47-42b2-8e88-042fc1d6eeb6" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

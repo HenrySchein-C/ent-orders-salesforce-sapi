@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <http:listener-config name="http_listner_config" doc:name="HTTP Listener config" doc:id="c95957e9-eb9b-4c48-8d38-9699aea6fadb">
+        <http:listener-connection host="0.0.0.0" port="${listener.port}" tlsContext="tls_inbound_listner_config" protocol="HTTPS" />
+    </http:listener-config>
+    <tls:context name="tls_inbound_listner_config" doc:name="TLS KeyStore Context" doc:id="93e82194-ab32-4114-a8ca-a86cc4b8d636">
+        <tls:key-store type="jks" path="${listener.keystore.path}" alias="${listener.keystore.key.alias}" keyPassword="${listener.keystore.key.password}" password="${listener.keystore.password}" />
+    </tls:context>
+    <http:request-config name="HTTP_Request_configuration_token" doc:name="HTTP Request configuration" doc:id="580ec2c9-d021-43a7-825a-d25ec6e453e6" basePath="${http.request.basepath}">
+        <http:request-connection host="${http.request.host.henryschein}" port="${http.request.port}" protocol="HTTPS" />
+    </http:request-config>
+    <configuration-properties doc:name="Configuration properties" doc:id="fb9e58cb-6f6c-4c24-bee3-e4d32fe708f2" file="properties\config.yaml" />
+    <apikit:config name="e-and-t-orders-salesforce-sapi-config" api="resource::a38a1117-cf8d-44b1-aeb1-b1f0ec0deaa5.na-business-systems-team:e-and-t-orders-salesforce-sapi:1.0.4:oas:zip:e-and-t-orders-salesforce-sapi.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+</mule>

@@ -11,8 +11,18 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	
 	<sub-flow name="access_Salesforce_Sub_Flow" doc:id="e089fee6-1e56-436d-8466-3bd3403ee96f" >
 		<module-logging:start-logger doc:name="Start logger" doc:id="921a19f9-fd3b-4da4-8a1b-a3ab95789d96" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vTransactionId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T salesforce calling henryschein sandbox Started ']" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
-		<http:request method="POST" doc:name="Request" doc:id="8ad24511-ac0c-4b3b-9285-32d6081cd7c7" target="targetToken" config-ref="HTTP_Request_configuration_token" path="/oauth2/token">
-			<http:query-params ><![CDATA[#[output application/java
+		<module-logging:debug-start-logger
+			doc:name="Debug start logger"
+			doc:id="d6df7049-7fd2-4604-aa8e-5739f1420bfa"
+			Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]"
+			Transaction_Id="#[vars.vCorrelationId]"
+			Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}"
+			Source="${operations.constants.source}" Target="${operations.constants.target}"
+			Message="#['Invoke salesforce token sapi for Debug started']"
+			Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+		<try doc:name="Try" doc:id="23c1fca6-662d-4257-a3d7-3cb595dbd5d3" >
+			<http:request method="POST" doc:name="Request" doc:id="8ad24511-ac0c-4b3b-9285-32d6081cd7c7" target="targetToken" config-ref="HTTP_Request_configuration_token" path="/oauth2/token">
+			<http:query-params><![CDATA[#[output application/java
 ---
 {
 "grant_type" : "password",
@@ -22,13 +32,55 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 "password": "Amlzsk@123zyShVIvE316wiu1EAlpG8Ac0f"
 }]]]></http:query-params>
 		</http:request>
-		<http:request method="POST" doc:name="Request" doc:id="f70efe3e-539d-46d5-9dc4-d3781f126d1a" path="/apexrest/SFOrderCreation" config-ref="HTTP_Request_configuration_token">
-			<http:headers ><![CDATA[#[output application/json
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c95ae90e-4642-4b6e-9025-8b83fae20acb" >
+					<module-logging:error-logger doc:name="Error logger" doc:id="e680808e-e9b9-4cd3-9454-ce53093e15f1" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vCorrelationId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="${operations.constants.source}" Target="${operations.constants.target}" Error_Type="#[error.errorType.asString]" Error_Description="#[error.description]" Error_Message="#[error.errorMessage]" Message="#['Salesforce token creation request got error at' ++ now()]" Request_Path="#[vars.vRequestResourceUri]" Method="#[vars.vRequestMethod]" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<module-logging:debug-end-logger
+			doc:name="Debug end logger"
+			doc:id="7e51168e-f99a-4d70-b333-c255bc3d4105"
+			Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]"
+			Transaction_Id="#[vars.vCorrelationId]"
+			Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}"
+			Source="{operations.constants.source}" Target="{operations.constants.target}"
+			Message="#['Debug call for salesforce token sapi ended']"
+			Time_Taken="#[output application/json --- now()]"
+			Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+		<module-logging:debug-start-logger
+			doc:name="Debug start logger"
+			doc:id="fab9ad04-dae3-4d3b-9603-2aa8173c05dd"
+			Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]"
+			Transaction_Id="#[vars.vCorrelationId]"
+			Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}"
+			Source="${operations.constants.source}" Target="${operations.constants.target}"
+			Message="#['Debug call for salesforce order creation sapi for  started']"
+			Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+		<try doc:name="Try" doc:id="dfd0c88a-ebb2-4bdf-9b3b-018d801bd8a6" >
+			<http:request method="POST" doc:name="Request" doc:id="f70efe3e-539d-46d5-9dc4-d3781f126d1a" path="/apexrest/SFOrderCreation" config-ref="HTTP_Request_configuration_token">
+			<http:headers><![CDATA[#[output application/json
 ---
 {
 	"Authorization" : "Bearer " ++ vars.targetToken.access_token
 }]]]></http:headers>
 		</http:request>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4a44928a-7cdb-45d3-a91a-e55a9b9aa6c6" >
+					<module-logging:error-logger doc:name="Error logger" doc:id="94648911-76f3-4e4e-bd05-fb9a0574d52c" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vCorrelationId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="${operations.constants.source}" Target="${operations.constants.target}" Error_Type="#[error.errorType.asString]" Error_Description="#['Salesforce OrderCreation request got error at' ++ now()]" Error_Message="#[error.errorMessage]" Message="#[error.description]" Request_Path="#[vars.vRequestResourceUri]" Method="#[vars.vRequestMethod]" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<module-logging:debug-end-logger
+			doc:name="Debug end logger"
+			doc:id="2c286264-aa05-40ee-984d-235e0e4eb6a7"
+			Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]"
+			Transaction_Id="#[vars.vCorrelationId]"
+			Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}"
+			Source="{operations.constants.source}" Target="{operations.constants.target}"
+			Message="#['Debug call for salesforce order creation sapi for  ended']"
+			Time_Taken="#[output application/json --- now()]"
+			Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
 		<module-logging:end-logger doc:name="End logger" doc:id="5afff209-1908-4d8e-b8fa-272a737e444e" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vTransactionId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T Salesforce data insertion Completed']" Time_Taken="#[output application/json --- now()]" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
 	</sub-flow>
 </mule>

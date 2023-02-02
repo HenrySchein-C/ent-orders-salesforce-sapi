@@ -68,18 +68,7 @@ output application/json
         <flow-ref doc:name="Refer to salesforce subflow" doc:id="87ae7fbf-52d9-45d6-9b1a-bccd586a9cda" name="access_Salesforce_Sub_Flow" />
         <ee:transform>
             <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"response" : {
-		"httpStatus": Mule::p('http.response.code.success'),
-        
-        "status": if(isEmpty(payload)) Mule::p('http.constants.response.success') else Mule::p('http.constants.response.failure'),
-        "message" : "Payload was sucessfully inserted into salesforce",
-        "correlationId": vars.vCorrelationId,
-        "timestamp": now()
-	}}]]></ee:set-payload>
+				<ee:set-payload resource="salesforce-Sucess-Payload.dwl" />
             </ee:message>
         </ee:transform>
     </flow>

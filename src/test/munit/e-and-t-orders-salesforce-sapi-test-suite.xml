@@ -113,7 +113,6 @@
 		</munit:execution>
 		<munit:validation>
 			<munit-tools:assert-that doc:name="Assert that" doc:id="eaee8c52-9d52-4170-a01e-c146304aed97" is="#[MunitTools::notNullValue()]" expression="#[vars.vHttpStatus]"/>
-			<munit-tools:assert doc:name="Assert expression" doc:id="08642984-4e47-42b2-8e88-042fc1d6eeb6" />
 		</munit:validation>
 	</munit:test>
 

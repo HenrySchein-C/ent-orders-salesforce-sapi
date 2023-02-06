@@ -20,7 +20,7 @@
                 <ee:set-variable resource="dataweave/vCurrentTime.dwl" variableName="vStartTime" />
             </ee:variables>
         </ee:transform>
-        <module-logging:start-logger doc:name="Start logger" doc:id="2ec98192-9251-4375-9bf5-33be2fab6970" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vTransactionId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T salesforce SAPI Instance Started ']" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
+        <module-logging:start-logger doc:name="Start logger" doc:id="2ec98192-9251-4375-9bf5-33be2fab6970" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vCorrelationId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T salesforce SAPI Instance Started ']" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
         <apikit:router config-ref="e-and-t-orders-salesforce-sapi-config" />
         <module-logging:end-logger doc:name="End logger" doc:id="186ab0c3-a164-4302-a4fc-42125607fb7b" Application_Name="#[app.name]" Flow_Name="#[vars.vFlowName]" Transaction_Id="#[vars.vTransactionId]" Correlation_Id="#[vars.vCorrelationId]" Environment="${environment}" Source="#[vars.vOriginationCode]" Target="${operations.constants.target}" Message="#['E and T Salesforce SAPI Completed']" Time_Taken="#[output application/json --- now() - vars.vStartTime]" Request_Path="#[vars.vRequestUri]" Method="#[vars.vRequestMethod]" />
         <error-handler>
@@ -68,18 +68,7 @@ output application/json
         <flow-ref doc:name="Refer to salesforce subflow" doc:id="87ae7fbf-52d9-45d6-9b1a-bccd586a9cda" name="access_Salesforce_Sub_Flow" />
         <ee:transform>
             <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"response" : {
-		"httpStatus": Mule::p('http.response.code.success'),
-        
-        "status": if(isEmpty(payload)) Mule::p('http.constants.response.success') else Mule::p('http.constants.response.failure'),
-        "message" : "Payload was sucessfully inserted into salesforce",
-        "correlationId": vars.vCorrelationId,
-        "timestamp": now()
-	}}]]></ee:set-payload>
+				<ee:set-payload resource="dataweave/salesforce-Sucess-Payload.dwl" />
             </ee:message>
         </ee:transform>
     </flow>

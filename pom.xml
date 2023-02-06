@@ -47,20 +47,14 @@
 						<!-- API Properties -->
 						<properties>
 							<!-- keystore_config -->
-							<http.listener.reconnection.frequency>${http.listener.reconnection.frequency}</http.listener.reconnection.frequency>
-							<http.listener.reconnection.attempts>${http.listener.reconnection.attempts}</http.listener.reconnection.attempts>
-							<http.listener.port>${http.listener.port}</http.listener.port>
-							<redis.host>${redis.host}</redis.host>
-							<redis.port>${redis.port}</redis.port>
-							<redis.password>${redis.password}</redis.password>
-							<redis.reconnection.frequency>${redis.reconnection.frequency}</redis.reconnection.frequency>
-							<redis.reconnection.attempts>${redis.reconnection.attempts}</redis.reconnection.attempts>
-							<api.id>${api.id}</api.id>
+							
 							<http.listener.keystore.path>${http.listener.keystore.path}</http.listener.keystore.path>
 							<http.listener.keystore.key.alias>${http.listener.keystore.key.alias}</http.listener.keystore.key.alias>
 							<http.listener.keystore.key.password>${http.listener.keystore.key.password}</http.listener.keystore.key.password>
 							<http.listener.keystore.password>${http.listener.keystore.password}</http.listener.keystore.password>
 							<environment>${environment}</environment>
+							<endpoint.order.token>${endpoint.order.token}</endpoint.order.token>
+							<endpoint.order.creation>${endpoint.order.creation}</endpoint.order.creation>
 							<anypoint.platform.client_id>${anypoint.platform.client_id}</anypoint.platform.client_id>
 							<anypoint.platform.client_secret>${anypoint.platform.client_secret}</anypoint.platform.client_secret>
 							<anypoint.platform.config.analytics.agent.enabled>true</anypoint.platform.config.analytics.agent.enabled>
@@ -116,12 +110,6 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>org.mule.connectors</groupId>
-			<artifactId>mule-sockets-connector</artifactId>
-			<version>1.2.3</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-apikit-module</artifactId>
 			<version>1.6.1</version>
@@ -160,12 +148,7 @@
 			<classifier>mule-plugin</classifier>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.mule.weave</groupId>
-			<artifactId>assertions</artifactId>
-			<version>1.0.2</version>
-			<scope>test</scope>
-		</dependency>
+		
 	</dependencies>
 
 	<repositories>

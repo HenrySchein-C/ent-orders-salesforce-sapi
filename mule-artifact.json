@@ -1,3 +1,11 @@
 {
-  "minMuleVersion": "4.4.0"
+  "minMuleVersion": "4.4.0",
+  "secureProperties": [
+  	"encryption.key",
+    "javax.net.ssl.trustStorePassword",
+    "anypoint.platform.client_secret",
+    "listener.keystore.key.password",
+	"listener.keystore.password"
+	
+  ]
 }

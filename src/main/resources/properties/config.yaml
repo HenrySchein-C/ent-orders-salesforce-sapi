@@ -6,18 +6,12 @@ http:
   listener:
     port: "8092"
   request:
-    method:
-      restriction:
-        createupdate: "PUT"
-        delete: "DELETE"
-      blocking:
-        createupdate: "PUT"
-        delete: "DELETE"
+    basepath: "/services"
   response:
     code:
       success: "200"
   constants:
-    response:
+    response: 
       success: "SUCCESS"
       failure: "ERROR"
 
@@ -31,7 +25,16 @@ country:
   us: "US"  
   canada: "CANADA"
 
-  
+
+salesforce:
+  grant:
+    type: "password"
+  headers:
+    client:
+      username: "equipmentorders.integrationuser@ibm.com.pldevteam3"
+      password: "Amlzsk@123zyShVIvE316wiu1EAlpG8Ac0f"
+      id: "3MVG973QtA4.tpvmU7itl2xfAfZrm1kGUj2HMwuRVusoPKm4UoWrR2hqrtlUsicLlv.UHKpjPxsb8gw3IU_qu"
+      secret: "F697E1F5B2F0CA2A2375A3BBDE18C94F7C208732A35AEABCFB8D8CCE6108CF60"  
 operations:
   constants:
     errorType:
@@ -51,12 +54,12 @@ operations:
       unsupportedMediaType: "415"
       notImplemented: "501"
       internalServerError: "500"
-  
-    cron:
-      us: "* 0/1 * * * ? *"
-      can: "* 0/1 * * * ? *"
     source: "E&T"
     target: "Siebel"
     country:
       us: "US"
       canada: "Canada"
+endpoint:
+  order:
+    creation: "/apexrest/SFOrderCreation"
+    token: "/oauth2/token"

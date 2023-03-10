@@ -68,7 +68,7 @@ output application/json
         <flow-ref doc:name="Refer to salesforce subflow" doc:id="87ae7fbf-52d9-45d6-9b1a-bccd586a9cda" name="access_Salesforce_Sub_Flow" />
         <ee:transform>
             <ee:message>
-				<ee:set-payload resource="salesforce-Sucess-Payload.dwl" />
+                <ee:set-payload resource="salesforce-Sucess-Payload.dwl" />
             </ee:message>
         </ee:transform>
     </flow>
